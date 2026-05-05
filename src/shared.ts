@@ -18,7 +18,6 @@ export interface SessionState {
   sentMessageAt: number;
   reviewFired: boolean;
   reviewDebounceTimer: ReturnType<typeof setTimeout> | null;
-  nudgeTimer: ReturnType<typeof setTimeout> | null;
   lastNudgeAt: number;
   hasOpenTodos: boolean;
   needsContinue: boolean;
@@ -63,7 +62,6 @@ export interface PluginConfig {
   reviewDebounceMs: number;
   showToasts: boolean;
   nudgeEnabled: boolean;
-  nudgeTimeoutMs: number;
   nudgeMessage: string;
   nudgeCooldownMs: number;
   autoCompact: boolean;
@@ -292,7 +290,6 @@ export function createSession(): SessionState {
     sentMessageAt: 0,
     reviewFired: false,
     reviewDebounceTimer: null,
-    nudgeTimer: null,
     lastNudgeAt: 0,
     hasOpenTodos: false,
     needsContinue: false,
