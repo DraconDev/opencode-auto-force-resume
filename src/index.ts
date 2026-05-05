@@ -17,7 +17,6 @@ import {
   formatMessage,
 } from "./shared.js";
 import { createTerminalModule } from "./terminal.js";
-import { createTerminalModule } from "./terminal.js";
 
 export const AutoForceResumePlugin: Plugin = async (input, options) => {
   let config: PluginConfig = {
@@ -900,7 +899,7 @@ export const AutoForceResumePlugin: Plugin = async (input, options) => {
   }
 
   // Register statusLine hook if available (future-proof)
-  registerStatusLineHook();
+  terminal.registerStatusLineHook(input);
 
   return {
     event: async ({ event }: { event: any }) => {
@@ -1009,8 +1008,8 @@ export const AutoForceResumePlugin: Plugin = async (input, options) => {
             startTimerToast(sid);
           }
           // Update terminal title and progress
-          updateTerminalTitle(sid);
-          updateTerminalProgress(sid);
+          terminal.updateTerminalTitle(sid);
+          terminal.updateTerminalProgress(sid);
           // Check for proactive compaction when resuming busy
           // Catches pre-existing context bloat from prior interactions
           await maybeProactiveCompact(sid);
