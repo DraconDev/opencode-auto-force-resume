@@ -1157,21 +1157,8 @@ export const AutoForceResumePlugin: Plugin = async (input, options) => {
           s.reviewDebounceTimer = null;
         }
         
-        // Handle nudge timer
-        if (hasPending && config.nudgeEnabled) {
-          // Start or reset nudge timer
-          if (s.nudgeTimer) {
-            clearTimeout(s.nudgeTimer);
-          }
-          s.nudgeTimer = setTimeout(() => {
-            s.nudgeTimer = null;
-            sendNudge(sid);
-          }, config.nudgeTimeoutMs);
-        } else if (!hasPending && s.nudgeTimer) {
-          // Cancel nudge if no pending todos
-          clearTimeout(s.nudgeTimer);
-          s.nudgeTimer = null;
-        }
+        // Note: Nudge is triggered by session.idle (primary) and session.status busy→idle (secondary)
+        // The todo.updated handler only updates hasOpenTodos flag — actual nudge fires on idle events
         writeStatusFile(sid);
         return;
       }

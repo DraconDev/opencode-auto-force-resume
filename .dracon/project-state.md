@@ -1,19 +1,14 @@
 # Project State
 
 ## Current Focus
-Refined nudge trigger logic for idle sessions with pending todos
+Removed nudge timer logic and clarified nudge trigger conditions
 
 ## Context
-The change improves the nudge system by:
-1. Making the idle event the primary nudge trigger
-2. Adding explicit conditions for nudges
-3. Removing the `wasBusy` check which was preventing nudges during repeated idle events
+The nudge functionality was being triggered by both the todo.updated handler and idle events, leading to potential duplicate nudges. This change consolidates the nudge triggering logic to be more predictable and prevent redundant notifications.
 
 ## Completed
-- [x] Changed nudge trigger to primary idle event handler
-- [x] Added explicit conditions for nudges (enabled, no pending continue, open todos, cooldown passed)
-- [x] Removed `wasBusy` check that was preventing nudges during repeated idle events
-- [x] Updated logging to reflect new conditions
+- [x] Removed redundant nudge timer logic from the todo.updated handler
+- [x] Added documentation clarifying that nudges are now triggered by session.idle events (primary) and session.status transitions (secondary)
 
 ## In Progress
 - [ ] None
@@ -22,5 +17,5 @@ The change improves the nudge system by:
 - None
 
 ## Next Steps
-1. Verify nudge behavior with multiple rapid idle events
-2. Test edge cases where `needsContinue` might be true during idle
+1. Verify that nudges are still being triggered correctly in integration tests
+2. Update documentation to reflect the new nudge triggering behavior
