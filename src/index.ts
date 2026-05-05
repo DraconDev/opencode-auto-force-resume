@@ -1177,16 +1177,15 @@ export const AutoForceResumePlugin: Plugin = async (input, options) => {
       }
 
       // session.idle fires when the model stops generating and goes idle
-      // This is the perfect time to check for pending todos and nudge the agent
+      // This is the primary nudge trigger — fires whenever model is idle with pending todos
       if (event?.type === "session.idle") {
         const s = getSession(sid);
-        // wasBusy check prevents double-nudge on repeated idle events
-        if (config.nudgeEnabled && s.wasBusy && s.hasOpenTodos && Date.now() - s.lastNudgeAt >= config.nudgeCooldownMs) {
-          s.wasBusy = false;
+        // Primary nudge path: idle + open todos + cooldown passed + no pending continue
+        if (config.nudgeEnabled && !s.needsContinue && s.hasOpenTodos && Date.now() - s.lastNudgeAt >= config.nudgeCooldownMs) {
           log('session idle with pending todos, sending nudge:', sid);
           await sendNudge(sid);
         } else {
-          log('session idle, no nudge needed:', sid, 'enabled:', config.nudgeEnabled, 'wasBusy:', s.wasBusy, 'hasTodos:', s.hasOpenTodos);
+          log('session idle, no nudge needed:', sid, 'enabled:', config.nudgeEnabled, 'needsContinue:', s.needsContinue, 'hasTodos:', s.hasOpenTodos);
         }
         // Keep timer running — idle is not terminal
         writeStatusFile(sid);
