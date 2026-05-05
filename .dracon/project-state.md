@@ -1,14 +1,14 @@
 # Project State
 
 ## Current Focus
-Removed nudge timer logic and clarified nudge trigger conditions
+Removed nudge timer cleanup logic from session state management
 
 ## Context
-The nudge functionality was being triggered by both the todo.updated handler and idle events, leading to potential duplicate nudges. This change consolidates the nudge triggering logic to be more predictable and prevent redundant notifications.
+This change eliminates redundant timer cleanup code that was previously handling both review debounce and nudge timers. The nudge timer logic was refactored separately to prevent duplicate nudges during idle events.
 
 ## Completed
-- [x] Removed redundant nudge timer logic from the todo.updated handler
-- [x] Added documentation clarifying that nudges are now triggered by session.idle events (primary) and session.status transitions (secondary)
+- [x] Removed redundant nudge timer cleanup code
+- [x] Simplified session state management by removing duplicate timer handling
 
 ## In Progress
 - [ ] None
@@ -17,5 +17,5 @@ The nudge functionality was being triggered by both the todo.updated handler and
 - None
 
 ## Next Steps
-1. Verify that nudges are still being triggered correctly in integration tests
-2. Update documentation to reflect the new nudge triggering behavior
+1. Verify no regression in nudge trigger conditions
+2. Review related documentation updates for nudge behavior

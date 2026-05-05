@@ -60,10 +60,6 @@ export const AutoForceResumePlugin: Plugin = async (input, options) => {
         clearTimeout(s.reviewDebounceTimer);
         s.reviewDebounceTimer = null;
       }
-      if (s.nudgeTimer) {
-        clearTimeout(s.nudgeTimer);
-        s.nudgeTimer = null;
-      }
       s.lastNudgeAt = 0;
       s.hasOpenTodos = false;
       s.needsContinue = false;
