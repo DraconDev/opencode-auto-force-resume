@@ -1,26 +1,21 @@
 # Project State
 
 ## Current Focus
-Major refactoring of session state management and related functionality
+Removed the default nudge timeout configuration to simplify session management.
 
 ## Context
-The code was heavily refactored to improve modularity and reduce complexity in session state management. This change follows a series of incremental refactorings that removed various timer and state management components.
+This change was part of a broader refactoring of session state management and nudge functionality. The nudge timeout was previously hardcoded but is now being handled dynamically during session lifecycle events.
 
 ## Completed
-- [x] Removed comprehensive session state management infrastructure
-- [x] Eliminated timer toast functionality
-- [x] Removed terminal integration module
-- [x] Simplified session state initialization
-- [x] Reduced session state tracking complexity
-- [x] Removed plan detection logic
-- [x] Simplified session state cleanup
+- [x] Removed `nudgeTimeoutMs` from default configuration to simplify session management
+- [x] Updated related documentation to reflect the removal
 
 ## In Progress
-- [ ] Ongoing refactoring of session lifecycle management
+- [ ] Verifying that dynamic nudge timing works correctly across all session states
 
 ## Blockers
-- None identified in this commit
+- None identified
 
 ## Next Steps
-1. Continue refactoring session state handling
-2. Implement new session management infrastructure
+1. Verify dynamic nudge timing in integration tests
+2. Update user documentation to reflect the new behavior

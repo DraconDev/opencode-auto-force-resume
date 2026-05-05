@@ -106,7 +106,6 @@ export const DEFAULT_CONFIG: PluginConfig = {
   reviewDebounceMs: 500,
   showToasts: false,
   nudgeEnabled: true,
-  nudgeTimeoutMs: 300000,
   nudgeMessage: "The session has {pending} open task(s) that still need to be completed: {todoList}. Please continue working on these tasks.",
   nudgeCooldownMs: 60000,
   autoCompact: true,
