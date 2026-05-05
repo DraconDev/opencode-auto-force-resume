@@ -4,18 +4,18 @@
 Removed nudge timer cleanup logic from session state management
 
 ## Context
-This change eliminates redundant timer cleanup code that was previously handling both review debounce and nudge timers. The nudge timer logic was refactored separately to prevent duplicate nudges during idle events.
+This change is part of a broader refactoring of the nudge timer functionality. The nudge timer was previously being reset on user activity, but this logic was removed to simplify the session state management.
 
 ## Completed
-- [x] Removed redundant nudge timer cleanup code
-- [x] Simplified session state management by removing duplicate timer handling
+- [x] Removed nudge timer cleanup logic from session state management
+- [x] Simplified session state management by removing redundant timer cleanup
 
 ## In Progress
-- [ ] None
+- [x] Ongoing refactoring of nudge timer functionality
 
 ## Blockers
-- None
+- None identified
 
 ## Next Steps
-1. Verify no regression in nudge trigger conditions
-2. Review related documentation updates for nudge behavior
+1. Verify that nudge timer functionality still works as expected without the cleanup logic
+2. Continue refactoring related nudge timer components
