@@ -17,6 +17,7 @@ import {
   formatMessage,
 } from "./shared.js";
 import { createTerminalModule } from "./terminal.js";
+import { createNotificationModule } from "./notifications.js";
 
 export const AutoForceResumePlugin: Plugin = async (input, options) => {
   let config: PluginConfig = {
@@ -117,6 +118,8 @@ export const AutoForceResumePlugin: Plugin = async (input, options) => {
   }
 
   const terminal = createTerminalModule({ config, sessions, log });
+
+  const notifications = createNotificationModule({ config, sessions, log, isDisposed: () => isDisposed, input });
 
   // ── Status File ────────────────────────────────────────────────────────
 
@@ -273,74 +276,6 @@ export const AutoForceResumePlugin: Plugin = async (input, options) => {
     }
   }
 
-  async function showTimerToast(sessionId: string) {
-    if (isDisposed) return;
-    if (!config.timerToastEnabled) return;
-    
-    const s = sessions.get(sessionId);
-    if (!s || s.actionStartedAt === 0) return;
-    
-    const now = Date.now();
-    const actionDuration = now - s.actionStartedAt;
-    const lastProgressDuration = now - s.lastProgressAt;
-    
-    const actionStr = formatDuration(actionDuration);
-    const progressStr = formatDuration(lastProgressDuration);
-    
-    const message = `⏱️ Action: ${actionStr} | Last progress: ${progressStr} ago`;
-    
-    try {
-      log('showing timer toast for session:', sessionId, message);
-      await (input.client as any).tui.showToast({
-        query: { directory: (input as any).directory || "" },
-        body: {
-          title: "Session Timer",
-          message: message,
-          variant: "info",
-        },
-      });
-    } catch (e) {
-      log('timer toast error (ignored):', e);
-    }
-  }
-
-  function startTimerToast(sessionId: string) {
-    const s = sessions.get(sessionId);
-    if (!s) return;
-    
-    // Clear existing timer
-    if (s.toastTimer) {
-      clearInterval(s.toastTimer);
-      s.toastTimer = null;
-    }
-    
-    if (!config.timerToastEnabled) return;
-    
-    s.actionStartedAt = Date.now();
-    
-    // Show first toast immediately
-    showTimerToast(sessionId);
-    
-    // Set up recurring timer
-    s.toastTimer = setInterval(() => {
-      showTimerToast(sessionId);
-    }, config.timerToastIntervalMs);
-    
-    log('timer toast started for session:', sessionId, 'interval:', config.timerToastIntervalMs);
-  }
-
-  function stopTimerToast(sessionId: string) {
-    const s = sessions.get(sessionId);
-    if (!s) return;
-    
-    if (s.toastTimer) {
-      clearInterval(s.toastTimer);
-      s.toastTimer = null;
-      log('timer toast stopped for session:', sessionId);
-    }
-    
-    s.actionStartedAt = 0;
-  }
 
   // Rough token estimation: code ≈ 0.5 tokens/char, English ≈ 0.25 tokens/char
   // This is a conservative estimate for proactive compaction
@@ -1005,7 +940,7 @@ export const AutoForceResumePlugin: Plugin = async (input, options) => {
           }
           // Start timer toast if not already running
           if (s.actionStartedAt === 0) {
-            startTimerToast(sid);
+            notifications.startTimerToast(sid);
           }
           // Update terminal title and progress
           terminal.updateTerminalTitle(sid);
@@ -1034,9 +969,9 @@ export const AutoForceResumePlugin: Plugin = async (input, options) => {
         }
         // Stop timer toast and clear terminal title/progress when session becomes idle
         if (status?.type === "idle") {
-          stopTimerToast(sid);
-          clearTerminalTitle();
-          clearTerminalProgress();
+          notifications.stopTimerToast(sid);
+          terminal.clearTerminalTitle();
+          terminal.clearTerminalProgress();
         }
         clearTimer(sid);
         if (!s.planning && !s.compacting) {
